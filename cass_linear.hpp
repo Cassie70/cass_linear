@@ -160,14 +160,18 @@ public:
   /// @return The dot product scalar result.
   T dot(const Vector2 &v) const
     requires Multipliable<T> && Addable<T>
-  { return x * v.x + y * v.y; }
+  {
+    return x * v.x + y * v.y;
+  }
 
   /// Computes the magnitude (length) of the 2D vector.
   ///
   /// @return The magnitude of the 2D vector scalar result.
   T magnitude() const
     requires Multipliable<T> && Addable<T>
-  { return sqrt(x * x + y * y); }
+  {
+    return sqrt(x * x + y * y);
+  }
 
   /// Normalizes the 2D vector to have a magnitude of 1.
   ///
@@ -319,7 +323,9 @@ public:
   /// @return The dot product of the two vectors.
   T dot(const Vector3 &v) const
     requires Multipliable<T> && Addable<T>
-  { return x * v.x + y * v.y + z * v.z; }
+  {
+    return x * v.x + y * v.y + z * v.z;
+  }
 
   /// Computes the cross product of the 3D vector with another 3D vector.
   ///
@@ -336,7 +342,9 @@ public:
   /// @return The magnitude of the 3D vector.
   T magnitude() const
     requires Multipliable<T> && Addable<T>
-  { return sqrt(x * x + y * y + z * z); }
+  {
+    return sqrt(x * x + y * y + z * z);
+  }
 
   /// Normalizes the 3D vector to have a magnitude of 1.
   ///
@@ -484,7 +492,9 @@ public:
   /// @return The magnitude of the 4D vector.
   T magnitude() const
     requires Multipliable<T> && Addable<T>
-  { return sqrt(x * x + y * y + z * z + t * t); }
+  {
+    return sqrt(x * x + y * y + z * z + t * t);
+  }
 
   /// Normalizes the 4D vector to have a magnitude of 1.
   ///
@@ -610,7 +620,9 @@ public:
   /// @return A reference to this 2x2 matrix.
   Matrix2 &scale(T value)
     requires Multipliable<T>
-  { return scale(Vector2<T>(value, value)); }
+  {
+    return scale(Vector2<T>(value, value));
+  }
 
   /// Applies a non-uniform scaling transformation to this matrix.
   ///
@@ -619,7 +631,9 @@ public:
   /// @return A reference to this 2x2 matrix.
   Matrix2 &scale(T x, T y)
     requires Multipliable<T>
-  { return scale(Vector2<T>(x, y)); }
+  {
+    return scale(Vector2<T>(x, y));
+  }
 
   /// Applies a rotation transformation to this matrix.
   ///
@@ -832,7 +846,9 @@ public:
   /// @return A reference to this 3x3 matrix.
   Matrix3 &scale(T value)
     requires Multipliable<T>
-  { return scale(Vector2<T>(value, value)); }
+  {
+    return scale(Vector2<T>(value, value));
+  }
 
   /// Applies a non-uniform scaling transformation to this matrix.
   ///
@@ -841,7 +857,9 @@ public:
   /// @return A reference to this 3x3 matrix.
   Matrix3 &scale(T x, T y)
     requires Multipliable<T>
-  { return scale(Vector2<T>(x, y)); }
+  {
+    return scale(Vector2<T>(x, y));
+  }
 
   /// Applies a rotation transformation to this matrix around the Z axis.
   ///
@@ -969,8 +987,8 @@ public:
     mat.m[0][0] = 1.0f / (aspect * tanHalfFov);
     mat.m[1][1] = 1.0f / tanHalfFov;
     mat.m[2][2] = -(far + near) / (far - near);
-    mat.m[2][3] = -1.0f;
-    mat.m[3][2] = -(2.0f * far * near) / (far - near);
+    mat.m[2][3] = -(2.0f * far * near) / (far - near);
+    mat.m[3][2] = -1.0f;
     return mat;
   }
 
@@ -1193,7 +1211,9 @@ public:
   /// @return A reference to this 4x4 matrix.
   Matrix4 &translate(T x, T y, T z)
     requires Multipliable<T>
-  { return translate(Vector3<T>(x, y, z)); }
+  {
+    return translate(Vector3<T>(x, y, z));
+  }
 
   /// Applies a scaling transformation using a 3D vector.
   ///
@@ -1217,7 +1237,9 @@ public:
   /// @return A reference to this 4x4 matrix.
   Matrix4 &scale(const Vector2<T> &v)
     requires Multipliable<T>
-  { return scale(Vector3<T>(v, 0)); }
+  {
+    return scale(Vector3<T>(v, 0));
+  }
 
   /// Applies a non-uniform scaling transformation.
   ///
@@ -1227,7 +1249,9 @@ public:
   /// @return A reference to this 4x4 matrix.
   Matrix4 &scale(T x, T y, T z)
     requires Multipliable<T>
-  { return scale(Vector3<T>(x, y, z)); }
+  {
+    return scale(Vector3<T>(x, y, z));
+  }
 
   /// Applies a uniform scaling transformation to this matrix.
   ///
@@ -1235,7 +1259,9 @@ public:
   /// @return A reference to this 4x4 matrix.
   Matrix4 &scale(T value)
     requires Multipliable<T>
-  { return scale(Vector3<T>(value, value, value)); }
+  {
+    return scale(Vector3<T>(value, value, value));
+  }
 
   /// Applies a rotation transformation around the X axis.
   ///
