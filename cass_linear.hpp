@@ -912,7 +912,7 @@ public:
     Matrix4 mat;
     for (int i = 0; i < 4; i++)
       for (int j = 0; j < 4; j++)
-        mat.m[i][j] = 0.0f;
+        mat.m[i][j] = 0.0;
     return mat;
   }
 
@@ -944,7 +944,7 @@ public:
     auto it = values.begin();
     for (int i = 0; i < 4; i++)
       for (int j = 0; j < 4; j++)
-        m[i][j] = (it != values.end()) ? *it++ : 0.0f;
+        m[i][j] = (it != values.end()) ? *it++ : 0.0;
   }
 
   /// Creates an orthographic projection matrix.
@@ -960,10 +960,10 @@ public:
     requires Divisible<T> && Subtractable<T>
   {
     Matrix4 mat = zero();
-    mat.m[0][0] = 2.0f / (right - left);
-    mat.m[1][1] = 2.0f / (top - bottom);
-    mat.m[2][2] = -2.0f / (far - near);
-    mat.m[3][3] = 1.0f;
+    mat.m[0][0] = 2.0 / (right - left);
+    mat.m[1][1] = 2.0 / (top - bottom);
+    mat.m[2][2] = -2.0 / (far - near);
+    mat.m[3][3] = 1.0;
 
     mat.m[0][3] = -(right + left) / (right - left);
     mat.m[1][3] = -(top + bottom) / (top - bottom);
@@ -983,12 +983,12 @@ public:
     requires Divisible<T> && Subtractable<T> && Multipliable<T>
   {
     Matrix4 mat = zero();
-    T tanHalfFov = tan(fov / 2.0f);
-    mat.m[0][0] = 1.0f / (aspect * tanHalfFov);
-    mat.m[1][1] = 1.0f / tanHalfFov;
+    T tanHalfFov = tan(fov / 2.0);
+    mat.m[0][0] = 1.0 / (aspect * tanHalfFov);
+    mat.m[1][1] = 1.0 / tanHalfFov;
     mat.m[2][2] = -(far + near) / (far - near);
-    mat.m[2][3] = -(2.0f * far * near) / (far - near);
-    mat.m[3][2] = -1.0f;
+    mat.m[2][3] = -(2.0 * far * near) / (far - near);
+    mat.m[3][2] = -1.0;
     return mat;
   }
 
@@ -996,7 +996,7 @@ public:
   void setIdentity() {
     for (int i = 0; i < 4; i++)
       for (int j = 0; j < 4; j++)
-        m[i][j] = (i == j) ? 1.0f : 0.0f;
+        m[i][j] = (i == j) ? 1.0 : 0.0;
   }
 
   /// Negates each element of this 4x4 matrix.
