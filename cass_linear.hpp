@@ -175,13 +175,20 @@ public:
 
   /// Normalizes the 2D vector to have a magnitude of 1.
   ///
-  /// @note This function does not check for zero-length vectors.
+  /// @note If the 2Dvector has a magnitude of 0, the original vector is
+  /// returned.
   /// @return The normalized 2D vector.
   Vector2 normalize() const
     requires Divisible<T> && Multipliable<T>
   {
-    T inv_m = 1 / magnitude();
-    return Vector2(x * inv_m, y * inv_m);
+    T mag = magnitude();
+
+    if (mag != T(0)) {
+      T inv_m = T(1) / mag;
+      return Vector3(x * inv_m, y * inv_m);
+    }
+
+    return *this;
   }
 
   /// Outputs the 2D vector to an output stream.
@@ -348,14 +355,21 @@ public:
 
   /// Normalizes the 3D vector to have a magnitude of 1.
   ///
+  /// @note If the 3D vector has a magnitude of 0, the original vector is
+  /// returned.
   /// @return The normalized 3D vector.
   Vector3 normalize() const
     requires Divisible<T> && Multipliable<T>
   {
-    T inv_m = 1 / magnitude();
-    return Vector3(x * inv_m, y * inv_m, z * inv_m);
-  }
+    T mag = magnitude();
 
+    if (mag != T(0)) {
+      T inv_m = T(1) / mag;
+      return Vector3(x * inv_m, y * inv_m, z * inv_m);
+    }
+
+    return *this;
+  }
   /// Outputs the 3D vector to an output stream.
   ///
   /// @param os The output stream.
@@ -498,12 +512,19 @@ public:
 
   /// Normalizes the 4D vector to have a magnitude of 1.
   ///
+  /// @note If the 4D vector has a magnitude of 0, the original vector is
   /// @return The normalized 4D vector.
   Vector4 normalize() const
     requires Divisible<T> && Multipliable<T>
   {
-    T inv_m = 1 / magnitude();
-    return Vector4(x * inv_m, y * inv_m, z * inv_m, t * inv_m);
+    T mag = magnitude();
+
+    if (mag != T(0)) {
+      T inv_m = T(1) / mag;
+      return Vector3(x * inv_m, y * inv_m, z * inv_m, t * inv_m);
+    }
+
+    return *this;
   }
 
   /// Outputs the 4D vector to an output stream.
@@ -659,8 +680,9 @@ public:
   Vector2<T> operator*(const Vector2<T> &v) const
     requires Multipliable<T> && Addable<T>
   {
-    return Vector2(m[0][0] * v.x + m[0][1] * v.y,
-                   m[1][0] * v.x + m[1][1] * v.y);
+    return Vector2(
+        m[0][0] * v.x + m[0][1] * v.y, m[1][0] * v.x + m[1][1] * v.y
+    );
   }
 
   /// Outputs the 2x2 matrix to an output stream.
@@ -753,9 +775,11 @@ public:
   Vector3<T> operator*(const Vector3<T> &v) const
     requires Multipliable<T> && Addable<T>
   {
-    return Vector3(m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z,
-                   m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z,
-                   m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z);
+    return Vector3(
+        m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z,
+        m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z,
+        m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z
+    );
   }
 
   /// Multiplies this matrix by another 3x3 matrix in place.
@@ -797,11 +821,11 @@ public:
 
     T det = a[0] * invOut[0] + a[1] * invOut[3] + a[2] * invOut[6];
 
-    if (det == 0) {
+    if (det == T(0)) {
       return *this; // no invertible
     }
 
-    det = 1.0 / det;
+    det = T(1) / det;
 
     for (int i = 0; i < 9; i++)
       invOut[i] *= det;
@@ -912,7 +936,7 @@ public:
     Matrix4 mat;
     for (int i = 0; i < 4; i++)
       for (int j = 0; j < 4; j++)
-        mat.m[i][j] = 0.0;
+        mat.m[i][j] = T(0);
     return mat;
   }
 
@@ -944,7 +968,7 @@ public:
     auto it = values.begin();
     for (int i = 0; i < 4; i++)
       for (int j = 0; j < 4; j++)
-        m[i][j] = (it != values.end()) ? *it++ : 0.0;
+        m[i][j] = (it != values.end()) ? *it++ : T(0);
   }
 
   /// Creates an orthographic projection matrix.
@@ -960,10 +984,10 @@ public:
     requires Divisible<T> && Subtractable<T>
   {
     Matrix4 mat = zero();
-    mat.m[0][0] = 2.0 / (right - left);
-    mat.m[1][1] = 2.0 / (top - bottom);
-    mat.m[2][2] = -2.0 / (far - near);
-    mat.m[3][3] = 1.0;
+    mat.m[0][0] = T(2) / (right - left);
+    mat.m[1][1] = T(2) / (top - bottom);
+    mat.m[2][2] = -T(2) / (far - near);
+    mat.m[3][3] = T(1);
 
     mat.m[0][3] = -(right + left) / (right - left);
     mat.m[1][3] = -(top + bottom) / (top - bottom);
@@ -983,12 +1007,12 @@ public:
     requires Divisible<T> && Subtractable<T> && Multipliable<T>
   {
     Matrix4 mat = zero();
-    T tanHalfFov = tan(fov / 2.0);
-    mat.m[0][0] = 1.0 / (aspect * tanHalfFov);
-    mat.m[1][1] = 1.0 / tanHalfFov;
+    T tanHalfFov = tan(fov / T(2));
+    mat.m[0][0] = T(1) / (aspect * tanHalfFov);
+    mat.m[1][1] = T(1) / tanHalfFov;
     mat.m[2][2] = -(far + near) / (far - near);
-    mat.m[2][3] = -(2.0 * far * near) / (far - near);
-    mat.m[3][2] = -1.0;
+    mat.m[2][3] = -(T(2) * far * near) / (far - near);
+    mat.m[3][2] = -T(1);
     return mat;
   }
 
@@ -996,7 +1020,7 @@ public:
   void setIdentity() {
     for (int i = 0; i < 4; i++)
       for (int j = 0; j < 4; j++)
-        m[i][j] = (i == j) ? 1.0 : 0.0;
+        m[i][j] = (i == j) ? T(1) : T(0);
   }
 
   /// Negates each element of this 4x4 matrix.
@@ -1081,7 +1105,8 @@ public:
         m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3] * v.t,
         m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3] * v.t,
         m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3] * v.t,
-        m[3][0] * v.x + m[3][1] * v.y + m[3][2] * v.z + m[3][3] * v.t);
+        m[3][0] * v.x + m[3][1] * v.y + m[3][2] * v.z + m[3][3] * v.t
+    );
   }
 
   /// Inverts the matrix in-place.
@@ -1164,11 +1189,11 @@ public:
     T det = a[0] * invOut[0] + a[1] * invOut[4] + a[2] * invOut[8] +
             a[3] * invOut[12];
 
-    if (det == 0) {
+    if (det == T(0)) {
       return *this;
     }
 
-    det = 1.0 / det;
+    det = T(1) / det;
 
     for (int i = 0; i < 16; i++)
       invOut[i] *= det;
