@@ -135,6 +135,27 @@ public:
     return Vector2(x * f, y * f);
   }
 
+  /// Multiplies a scalar value by a 2D vector.
+  ///
+  /// @param f The scalar value to multiply by.
+  /// @param v The 2D vector to multiply.
+  /// @return The resulting 2D vector.
+  friend Vector2 operator*(const T &f, const Vector2 &v)
+    requires Multipliable<T>
+  {
+    return Vector2(v.x * f, v.y * f);
+  }
+
+  /// Divides each component of the 2D vector by a scalar value.
+  ///
+  /// @param f The scalar value to divide by.
+  /// @return The resulting 2D vector.
+  Vector2 operator/(const T &f) const
+    requires Divisible<T>
+  {
+    return Vector2(x / f, y / f);
+  }
+
   /// Adds another 2D vector to this 2D vector in place.
   ///
   /// @param v The 2D vector to add.
@@ -150,6 +171,7 @@ public:
   /// Subtracts another 2D vector from this 2D vector in place.
   ///
   /// @param v The 2D vector to subtract.
+  /// @return A reference to this 2D vector.
   Vector2 operator-=(const Vector2 &v)
     requires SubtractAssignable<T>
   {
@@ -300,6 +322,27 @@ public:
     requires Multipliable<T>
   {
     return Vector3(x * f, y * f, z * f);
+  }
+
+  /// Multiplies a scalar value by a 3D vector.
+  ///
+  /// @param f The scalar value to multiply by.
+  /// @param v The 3D vector to multiply.
+  /// @return The resulting 3D vector.
+  friend Vector3 operator*(const T &f, const Vector3 &v)
+    requires Multipliable<T>
+  {
+    return Vector3(v.x * f, v.y * f, v.z * f);
+  }
+
+  /// Divides each component of the 3D vector by a scalar.
+  ///
+  /// @param f The scalar value to divide by.
+  /// @return The resulting 3D vector.
+  Vector3 operator/(const T &f) const
+    requires Divisible<T>
+  {
+    return Vector3(x / f, y / f, z / f);
   }
 
   /// Adds another 3D vector to this 3D vector in place.
@@ -467,6 +510,27 @@ public:
     return Vector4(x - f, y - f, z - f, t - f);
   }
 
+  /// Multiplies each component of the 4D vector by a scalar value.
+  ///
+  /// @param f The scalar value to multiply by.
+  /// @return The resulting 4D vector.
+  Vector4 operator*(const T &f) const
+    requires Multipliable<T>
+  {
+    return Vector4(x * f, y * f, z * f, t * f);
+  }
+
+  /// Multiplies a scalar value by a 4D vector.
+  ///
+  /// @param f The scalar value to multiply by.
+  /// @param v The 4D vector to multiply.
+  /// @return The resulting 4D vector.
+  friend Vector4 operator*(const T &f, const Vector4 &v)
+    requires Multipliable<T>
+  {
+    return Vector4(v.x * f, v.y * f, v.z * f, v.t * f);
+  }
+
   /// Adds another 4D vector to this 4D vector in place.
   ///
   /// @param v The 4D vector to add.
@@ -517,6 +581,7 @@ public:
   /// Normalizes the 4D vector to have a magnitude of 1.
   ///
   /// @note If the 4D vector has a magnitude of 0, the original vector is
+  ///       returned unchanged.
   /// @return The normalized 4D vector.
   Vector4 normalize() const
     requires Divisible<T> && Multipliable<T>
@@ -1020,6 +1085,43 @@ public:
     return mat;
   }
 
+  /// Applies a look-at transformation to this matrix.
+  ///
+  /// @brief This transformation positions and orients the camera in 3D space.
+  /// @param eye The position of the camera.
+  /// @param center The point the camera is looking at.
+  /// @param up The up direction vector.
+  /// @return A reference to this 4x4 matrix.
+  static Matrix4
+  lookAt(const Vector3<T> &eye, const Vector3<T> &center, const Vector3<T> &up)
+    requires Multipliable<T> && Addable<T> && Subtractable<T> && Divisible<T>
+  {
+    Vector3<T> f = (center - eye).normalize();
+    Vector3<T> s = f.cross(up).normalize();
+    Vector3<T> u = s.cross(f);
+
+    Matrix4 result = identity();
+
+    // Row 0: Vector Right (s)
+    result.m[0][0] = s.x;
+    result.m[0][1] = s.y;
+    result.m[0][2] = s.z;
+
+    // Row 1: Vector Up (u)
+    result.m[1][0] = u.x;
+    result.m[1][1] = u.y;
+    result.m[1][2] = u.z;
+
+    // Row 2: Vector Forward inverted (-f)
+    result.m[2][0] = -f.x;
+    result.m[2][1] = -f.y;
+    result.m[2][2] = -f.z;
+
+    result.translate(-eye);
+
+    return result;
+  }
+
   /// Sets this matrix to the identity matrix.
   void setIdentity() {
     for (int i = 0; i < 4; i++)
@@ -1343,44 +1445,6 @@ public:
     return *this;
   }
 
-  /// Applies a look-at transformation to this matrix.
-  ///
-  /// @brief This transformation positions and orients the camera in 3D space.
-  /// @param eye The position of the camera.
-  /// @param center The point the camera is looking at.
-  /// @param up The up direction vector.
-  /// @return A reference to this 4x4 matrix.
-  Matrix4 &
-  lookAt(const Vector3<T> &eye, const Vector3<T> &center, const Vector3<T> &up)
-    requires Multipliable<T> && Addable<T> && Subtractable<T> && Divisible<T>
-  {
-    Vector3<T> f = (center - eye).normalize();
-    Vector3<T> s = f.cross(up).normalize();
-    Vector3<T> u = s.cross(f);
-
-    Matrix4 result = identity();
-
-    // Row 0: Vector Right (s)
-    result.m[0][0] = s.x;
-    result.m[0][1] = s.y;
-    result.m[0][2] = s.z;
-
-    // Row 1: Vector Up (u)
-    result.m[1][0] = u.x;
-    result.m[1][1] = u.y;
-    result.m[1][2] = u.z;
-
-    // Row 2: Vector Forward inverted (-f)
-    result.m[2][0] = -f.x;
-    result.m[2][1] = -f.y;
-    result.m[2][2] = -f.z;
-
-    *this *= result;
-
-    translate(-eye);
-
-    return *this;
-  }
   /// Outputs the 4x4 matrix to an output stream.
   ///
   /// @param os The output stream.
