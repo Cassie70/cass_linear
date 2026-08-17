@@ -1339,6 +1339,44 @@ public:
     return *this;
   }
 
+  /// Applies a look-at transformation to this matrix.
+  ///
+  /// @brief This transformation positions and orients the camera in 3D space.
+  /// @param eye The position of the camera.
+  /// @param center The point the camera is looking at.
+  /// @param up The up direction vector.
+  /// @return A reference to this 4x4 matrix.
+  Matrix4 &
+  lookAt(const Vector3<T> &eye, const Vector3<T> &center, const Vector3<T> &up)
+    requires Multipliable<T> && Addable<T> && Subtractable<T> && Divisible<T>
+  {
+    Vector3<T> f = (center - eye).normalize();
+    Vector3<T> s = f.cross(up).normalize();
+    Vector3<T> u = s.cross(f);
+
+    Matrix4 result = identity();
+
+    // Row 0: Vector Right (s)
+    result.m[0][0] = s.x;
+    result.m[0][1] = s.y;
+    result.m[0][2] = s.z;
+
+    // Row 1: Vector Up (u)
+    result.m[1][0] = u.x;
+    result.m[1][1] = u.y;
+    result.m[1][2] = u.z;
+
+    // Row 2: Vector Forward inverted (-f)
+    result.m[2][0] = -f.x;
+    result.m[2][1] = -f.y;
+    result.m[2][2] = -f.z;
+
+    *this *= result;
+
+    translate(-eye);
+
+    return *this;
+  }
   /// Outputs the 4x4 matrix to an output stream.
   ///
   /// @param os The output stream.
