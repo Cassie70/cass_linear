@@ -7,6 +7,8 @@
 
 namespace cass {
 
+inline constexpr double PI = 3.141592653589793;
+
 /// Concept for types that support addition.
 template <typename T>
 concept Addable = requires(T a, T b) {
@@ -48,6 +50,8 @@ template <typename T>
 concept SubtractAssignable = requires(T a, T b) {
   { a -= b } -> std::convertible_to<T>;
 };
+
+inline double radians(double degrees) { return degrees * PI / 180; }
 
 /// A two-dimensional vector containing values of type T.
 ///
@@ -680,8 +684,9 @@ public:
   Vector2<T> operator*(const Vector2<T> &v) const
     requires Multipliable<T> && Addable<T>
   {
-    return Vector2(m[0][0] * v.x + m[0][1] * v.y,
-                   m[1][0] * v.x + m[1][1] * v.y);
+    return Vector2(
+        m[0][0] * v.x + m[0][1] * v.y, m[1][0] * v.x + m[1][1] * v.y
+    );
   }
 
   /// Outputs the 2x2 matrix to an output stream.
@@ -774,9 +779,11 @@ public:
   Vector3<T> operator*(const Vector3<T> &v) const
     requires Multipliable<T> && Addable<T>
   {
-    return Vector3(m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z,
-                   m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z,
-                   m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z);
+    return Vector3(
+        m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z,
+        m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z,
+        m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z
+    );
   }
 
   /// Multiplies this matrix by another 3x3 matrix in place.
@@ -1102,7 +1109,8 @@ public:
         m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3] * v.t,
         m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3] * v.t,
         m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3] * v.t,
-        m[3][0] * v.x + m[3][1] * v.y + m[3][2] * v.z + m[3][3] * v.t);
+        m[3][0] * v.x + m[3][1] * v.y + m[3][2] * v.z + m[3][3] * v.t
+    );
   }
 
   /// Inverts the matrix in-place.
