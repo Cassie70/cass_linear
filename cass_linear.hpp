@@ -52,6 +52,7 @@ concept SubtractAssignable = requires(T a, T b) {
 };
 
 inline double radians(double degrees) { return degrees * PI / 180; }
+inline double degrees(double degrees) { return degrees * 180 / PI; }
 
 /// A two-dimensional vector containing values of type T.
 ///
