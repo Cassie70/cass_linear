@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-namespace cass {
+namespace cass::linear {
 
 /// Concept for types that support addition.
 template <typename T>
@@ -1352,4 +1352,4 @@ public:
     return os;
   }
 };
-} // namespace cass
+} // namespace cass::linear

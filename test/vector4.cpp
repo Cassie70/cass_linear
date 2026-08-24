@@ -2,9 +2,11 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+using namespace cass::linear;
+
 TEST_CASE("Vector4 construction and conversions", "[Vector4]") {
   SECTION("Default constructor creates zero vector") {
-    cass::Vector4<int> v;
+    Vector4<int> v;
     REQUIRE(v.x == 0);
     REQUIRE(v.y == 0);
     REQUIRE(v.z == 0);
@@ -12,7 +14,7 @@ TEST_CASE("Vector4 construction and conversions", "[Vector4]") {
   }
 
   SECTION("Component constructor initializes correctly") {
-    cass::Vector4<float> v(1.0f, 2.0f, 3.0f, 4.0f);
+    Vector4<float> v(1.0f, 2.0f, 3.0f, 4.0f);
     REQUIRE(v.x == 1.0f);
     REQUIRE(v.y == 2.0f);
     REQUIRE(v.z == 3.0f);
@@ -20,8 +22,8 @@ TEST_CASE("Vector4 construction and conversions", "[Vector4]") {
   }
 
   SECTION("Construction from Vector3 and t component") {
-    cass::Vector3<double> v3(1.0, 2.0, 3.0);
-    cass::Vector4<double> v4(v3, 4.0);
+    Vector3<double> v3(1.0, 2.0, 3.0);
+    Vector4<double> v4(v3, 4.0);
     REQUIRE(v4.x == 1.0);
     REQUIRE(v4.y == 2.0);
     REQUIRE(v4.z == 3.0);
@@ -31,8 +33,8 @@ TEST_CASE("Vector4 construction and conversions", "[Vector4]") {
 
 TEST_CASE("Vector4 arithmetic and geometric operations", "[Vector4]") {
   SECTION("Addition and Subtraction") {
-    cass::Vector4<int> a(1, 2, 3, 4);
-    cass::Vector4<int> b(5, 6, 7, 8);
+    Vector4<int> a(1, 2, 3, 4);
+    Vector4<int> b(5, 6, 7, 8);
 
     auto sum = a + b;
     REQUIRE(sum.x == 6);
@@ -48,7 +50,7 @@ TEST_CASE("Vector4 arithmetic and geometric operations", "[Vector4]") {
   }
 
   SECTION("Dot product, Magnitude and Normalization") {
-    cass::Vector4<double> v(1.0, 1.0, 1.0, 1.0); // magnitude = sqrt(4) = 2
+    Vector4<double> v(1.0, 1.0, 1.0, 1.0); // magnitude = sqrt(4) = 2
     REQUIRE(v.dot(v) == 4.0);
     REQUIRE_THAT(v.magnitude(), Catch::Matchers::WithinRel(2.0, 0.0001));
 
